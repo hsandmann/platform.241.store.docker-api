@@ -1,0 +1,46 @@
+version: '3.8'
+name: store
+
+services:
+
+  db-store:
+    container_name: store-db-store
+    image: postgres:latest
+    ports:
+      - 5800:5432
+    environment:
+      - POSTGRES_USER=store
+      - POSTGRES_PASSWORD=store
+      - POSTGRES_DB=store
+    volumes:
+      - $VOLUME/postgres/store/data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - private-network
+
+  account:
+    build:
+      context: ../platform.241.store.account-resource/
+      dockerfile_inline: |
+        FROM openjdk:23-slim
+        VOLUME /tmp
+        COPY target/*.jar app.jar
+        ENTRYPOINT ["java","-jar","/app.jar"]
+
+    image: store-account:latest
+    environment:
+      - spring.datasource.url=jdbc:postgresql://store-db-store:5432/store
+      - spring.datasource.username=store
+      - spring.datasource.password=store
+    deploy:
+      mode: replicated
+      replicas: 1
+    restart: always
+    networks:
+      - private-network
+    depends_on:
+      - db-store
+
+networks:
+  private-network:
+    driver: bridge
