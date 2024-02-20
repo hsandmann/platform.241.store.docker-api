@@ -21,12 +21,8 @@ services:
   account:
     build:
       context: ../platform.241.store.account-resource/
-      dockerfile_inline: |
-        FROM openjdk:23-slim
-        VOLUME /tmp
-        COPY target/*.jar app.jar
-        ENTRYPOINT ["java","-jar","/app.jar"]
-
+      dockerfile: Dockerfile
+    container_name: store-account
     image: store-account:latest
     environment:
       - spring.datasource.url=jdbc:postgresql://store-db-store:5432/store
