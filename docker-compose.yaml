@@ -7,7 +7,7 @@ services:
     container_name: store-db-store
     image: postgres:latest
     ports:
-      - 5800:5432
+      - 5432:5432
     environment:
       - POSTGRES_USER=store
       - POSTGRES_PASSWORD=store
@@ -24,6 +24,8 @@ services:
       dockerfile: Dockerfile
     container_name: store-account
     image: store-account:latest
+    ports:
+      - 8080:8080
     environment:
       - spring.datasource.url=jdbc:postgresql://store-db-store:5432/store
       - spring.datasource.username=store
