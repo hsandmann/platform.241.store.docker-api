@@ -18,6 +18,22 @@ services:
     networks:
       - private-network
 
+  discovery:
+    build:
+      context: ../platform.241.store.discovery/
+      dockerfile: Dockerfile
+    container_name: store-discovery
+    image: store-discovery:latest
+    ports:
+      - 8761:8761
+    environment:
+      - spring.datasource.url=jdbc:postgresql://store-db-store:5432/store
+      - spring.datasource.username=store
+      - spring.datasource.password=store
+    restart: always
+    networks:
+      - private-network
+
   account:
     build:
       context: ../platform.241.store.account-resource/
@@ -38,6 +54,7 @@ services:
       - private-network
     depends_on:
       - db-store
+      - discovery
 
 networks:
   private-network:
