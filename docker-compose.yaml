@@ -26,10 +26,6 @@ services:
     image: store-discovery:latest
     ports:
       - 8761:8761
-    environment:
-      - spring.datasource.url=jdbc:postgresql://store-db-store:5432/store
-      - spring.datasource.username=store
-      - spring.datasource.password=store
     restart: always
     networks:
       - private-network
@@ -46,6 +42,7 @@ services:
       - spring.datasource.url=jdbc:postgresql://store-db-store:5432/store
       - spring.datasource.username=store
       - spring.datasource.password=store
+      - eureka.client.service-url.defaultZone=http://store-discovery:8761/eureka/
     deploy:
       mode: replicated
       replicas: 1
@@ -55,6 +52,26 @@ services:
     depends_on:
       - db-store
       - discovery
+
+  auth:
+    build:
+      context: ../platform.241.store.auth-resource/
+      dockerfile: Dockerfile
+    container_name: store-auth
+    image: store-auth:latest
+    ports:
+      - 8081:8080
+    environment:
+      - eureka.client.service-url.defaultZone=http://store-discovery:8761/eureka/
+    deploy:
+      mode: replicated
+      replicas: 1
+    restart: always
+    networks:
+      - private-network
+    depends_on:
+      - discovery
+      - account
 
 networks:
   private-network:
