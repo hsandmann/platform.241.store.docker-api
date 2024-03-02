@@ -34,10 +34,7 @@ services:
     build:
       context: ../platform.241.store.account-resource/
       dockerfile: Dockerfile
-    container_name: store-account
     image: store-account:latest
-    ports:
-      - 8080:8080
     environment:
       - spring.datasource.url=jdbc:postgresql://store-db-store:5432/store
       - spring.datasource.username=store
@@ -57,16 +54,14 @@ services:
     build:
       context: ../platform.241.store.auth-resource/
       dockerfile: Dockerfile
-    container_name: store-auth
     image: store-auth:latest
     ports:
-      - 8081:8080
+      - 8080:8080
     environment:
       - eureka.client.service-url.defaultZone=http://store-discovery:8761/eureka/
     deploy:
       mode: replicated
       replicas: 1
-    restart: always
     networks:
       - private-network
     depends_on:
