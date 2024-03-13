@@ -18,6 +18,31 @@ services:
     networks:
       - private-network
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: store-prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - $VOLUME/prometheus:/etc/prometheus
+      - $VOLUME/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - private-network
+
+  grafana:
+    container_name: store-grafana
+    image: grafana/grafana-enterprise
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - $VOLUME/grafana:/var/lib/grafana
+      - $VOLUME/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources      
+    restart: always
+    networks:
+      - private-network
+
   discovery:
     build:
       context: ../platform.241.store.discovery/
